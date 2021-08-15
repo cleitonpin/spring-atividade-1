@@ -16,9 +16,16 @@ public class PersonResource {
     @Autowired
     private PersonRepository _personRepository;
 
-   @GetMapping(path = "/persons")
+    @GetMapping(path = "/persons")
     public List<Person> getAll() {
        return this._personRepository.findAll();
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Person> porId(@PathVariable Long id) {
+        return this._personRepository.findById(id)
+                .map(person -> ResponseEntity.ok(person))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping(path = "/person")
@@ -35,8 +42,12 @@ public class PersonResource {
     public void delete(@PathVariable Long id) {
        boolean isFound = this._personRepository.existsById(id);
 
-
-
        this._personRepository.deleteById(id);
     }
+
+    @PutMapping()
+    public Person put(@RequestBody Person pessoa) {
+        return this._personRepository.save(pessoa);
+    }
+
 }
