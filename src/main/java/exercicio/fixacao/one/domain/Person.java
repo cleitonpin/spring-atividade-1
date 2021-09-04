@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.Date;
 
 @Entity
@@ -16,6 +17,7 @@ public class Person {
     @Column
     private String nome;
     @Column
+    @Email
     private String email;
     @Column
     private String sexo;

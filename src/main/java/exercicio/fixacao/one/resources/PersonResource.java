@@ -2,6 +2,7 @@ package exercicio.fixacao.one.resources;
 
 import exercicio.fixacao.one.domain.Person;
 import exercicio.fixacao.one.repository.PersonRepository;
+import exercicio.fixacao.one.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,29 +15,31 @@ import java.util.List;
 public class PersonResource {
 
     @Autowired
-    private PersonRepository _personRepository;
+    private PersonService _personService;
 
-   @GetMapping(path = "/persons")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Person> buscarPorId(@PathVariable("id") Long id) throws Exception {
+        Person person = this._personService.findById(id);
+        return ResponseEntity.ok(person);
+    }
+
+    @GetMapping(path = "/persons")
     public List<Person> getAll() {
-       return this._personRepository.findAll();
+       return this._personService.showAll();
     }
 
     @PostMapping(path = "/person")
     public ResponseEntity<Person> create(@RequestBody Person person) {
-       this._personRepository.save(person);
-       URI uri = ServletUriComponentsBuilder
-                    .fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(person.getId()).toUri();
-
-       return ResponseEntity.created(uri).build();
+       return this._personService.save(person);
     }
 
     @DeleteMapping(path = "/person/{id}")
     public void delete(@PathVariable Long id) {
-       boolean isFound = this._personRepository.existsById(id);
+       this._personService.delete(id);
+    }
 
-
-
-       this._personRepository.deleteById(id);
+    @PutMapping(path = "/person/{id}")
+    public Person put(@RequestBody Person person) {
+       return this._personService.put(person);
     }
 }
