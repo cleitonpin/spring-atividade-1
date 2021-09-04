@@ -1,42 +1,36 @@
 package exercicio.fixacao.one.resources;
 
 import exercicio.fixacao.one.domain.Person;
-import exercicio.fixacao.one.repository.PersonRepository;
+import exercicio.fixacao.one.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
 public class PersonResource {
 
     @Autowired
-    private PersonRepository _personRepository;
+    private PersonService personService;
 
-   @GetMapping(path = "/persons")
+    @GetMapping(path = "/persons")
     public List<Person> getAll() {
-       return this._personRepository.findAll();
+       return this.personService.showAll();
     }
 
     @PostMapping(path = "/person")
     public ResponseEntity<Person> create(@RequestBody Person person) {
-       this._personRepository.save(person);
-       URI uri = ServletUriComponentsBuilder
-                    .fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(person.getId()).toUri();
-
-       return ResponseEntity.created(uri).build();
+       return this.personService.save(person);
     }
 
     @DeleteMapping(path = "/person/{id}")
     public void delete(@PathVariable Long id) {
-       boolean isFound = this._personRepository.existsById(id);
+       this.personService.delete(id);
+    }
 
-
-
-       this._personRepository.deleteById(id);
+    @PutMapping
+    public void put(@RequestBody Person person) {
+        personService.put(person);
     }
 }
